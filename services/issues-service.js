@@ -11,12 +11,17 @@ class IssuesService {
     const now = new Date();
 
     const id = crypto.randomUUID();
+
+    const { assigned_to, status_text, ...rest } = issue;
+
     const newIssue = {
       _id: id,
       open: true,
       created_on: now,
       updated_on: now,
-      ...issue,
+      assigned_to: assigned_to ?? "",
+      status_text: status_text ?? "",
+      ...rest,
     };
 
     this.issuesMap[project][id] = newIssue;
@@ -34,7 +39,7 @@ class IssuesService {
     if (!filters || Object.keys(filters).length <= 0) return issues;
 
     const filtered = issues.filter((issue) =>
-      Object.entries(filters).some(([key, value]) => issue[key] === value)
+      Object.entries(filters).every(([key, value]) => issue[key] == value)
     );
 
     return filtered;

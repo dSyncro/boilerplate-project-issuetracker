@@ -3,7 +3,8 @@
 const express     = require('express');
 const bodyParser  = require('body-parser');
 const expect      = require('chai').expect;
-const cors        = require('cors');
+const cors = require("cors");
+const { queryParser } = require("express-query-parser");
 require('dotenv').config();
 
 const apiRoutes         = require('./routes/api.js');
@@ -15,7 +16,16 @@ let app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/public', express.static(process.cwd() + '/public'));
 
-app.use(cors({origin: '*'})); //For FCC testing purposes only
+app.use(cors({ origin: "*" })); //For FCC testing purposes only
+
+app.use(
+  queryParser({
+    parseNull: true,
+    parseUndefined: true,
+    parseBoolean: true,
+    parseNumber: true,
+  })
+);
 
 
 

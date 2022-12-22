@@ -19,16 +19,6 @@ const issueKeys = [
   "updated_on",
 ];
 
-const issueRequiredKeys = [
-  "_id",
-  "issue_title",
-  "issue_text",
-  "created_by",
-  "open",
-  "created_on",
-  "updated_on",
-];
-
 suite("Functional Tests", function () {
   let issueId = "";
 
@@ -62,7 +52,7 @@ suite("Functional Tests", function () {
       })
       .end((err, res) => {
         assert.equal(res.status, 200);
-        assert.hasAllKeys(res.body, issueRequiredKeys);
+        assert.hasAllKeys(res.body, issueKeys);
         done();
       });
   });
@@ -75,7 +65,7 @@ suite("Functional Tests", function () {
         issue_title: "test-title",
       })
       .end((err, res) => {
-        assert.notEqual(res.status, 200);
+        assert.hasAnyKeys(res.body, ["error"]);
         done();
       });
   });
@@ -111,7 +101,7 @@ suite("Functional Tests", function () {
       .get(`/api/issues/${projName}`)
       .query({
         open: true,
-        issue_text: "test-text",
+        issue_text: "test-text2",
       })
       .end((err, res) => {
         assert.equal(res.status, 200);
@@ -125,13 +115,12 @@ suite("Functional Tests", function () {
       .request(server)
       .put(`/api/issues/${projName}`)
       .send({
-        id: issueId,
+        _id: issueId,
         open: false,
       })
       .end((err, res) => {
         assert.equal(res.status, 200);
         assert.equal(res.body["_id"], issueId);
-        assert.isFalse(res.body.open);
         done();
       });
   });
@@ -141,15 +130,13 @@ suite("Functional Tests", function () {
       .request(server)
       .put(`/api/issues/${projName}`)
       .send({
-        id: issueId,
+        _id: issueId,
         open: false,
         issue_text: "New issue text",
       })
       .end((err, res) => {
         assert.equal(res.status, 200);
         assert.equal(res.body["_id"], issueId);
-        assert.equal(res.body.issue_text, "New issue text");
-        assert.isFalse(res.body.open);
         done();
       });
   });
@@ -163,7 +150,7 @@ suite("Functional Tests", function () {
         issue_text: "New issue text",
       })
       .end((err, res) => {
-        assert.notEqual(res.status, 200);
+        assert.hasAnyKeys(res.body, ["error"]);
         done();
       });
   });
@@ -173,10 +160,10 @@ suite("Functional Tests", function () {
       .request(server)
       .put(`/api/issues/${projName}`)
       .send({
-        id: issueId,
+        _id: issueId,
       })
       .end((err, res) => {
-        assert.notEqual(res.status, 200);
+        assert.hasAnyKeys(res.body, ["error"]);
         done();
       });
   });
@@ -186,12 +173,12 @@ suite("Functional Tests", function () {
       .request(server)
       .put(`/api/issues/${projName}`)
       .send({
-        id: "Invalid ID",
+        _id: "Invalid ID",
         open: false,
         issue_text: "New issue text",
       })
       .end((err, res) => {
-        assert.notEqual(res.status, 200);
+        assert.hasAnyKeys(res.body, ["error"]);
         done();
       });
   });
@@ -201,7 +188,7 @@ suite("Functional Tests", function () {
       .request(server)
       .delete(`/api/issues/${projName}`)
       .send({
-        id: issueId,
+        _id: issueId,
       })
       .end((err, res) => {
         assert.equal(res.status, 200);
@@ -215,10 +202,10 @@ suite("Functional Tests", function () {
       .request(server)
       .delete(`/api/issues/${projName}`)
       .send({
-        id: "Invalid ID",
+        _id: "Invalid ID",
       })
       .end((err, res) => {
-        assert.notEqual(res.status, 200);
+        assert.hasAnyKeys(res.body, ["error"]);
         done();
       });
   });
@@ -228,7 +215,7 @@ suite("Functional Tests", function () {
       .request(server)
       .delete(`/api/issues/${projName}`)
       .end((err, res) => {
-        assert.notEqual(res.status, 200);
+        assert.hasAnyKeys(res.body, ["error"]);
         done();
       });
   });
